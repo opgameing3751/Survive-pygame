@@ -15,7 +15,8 @@ pygame.display.set_icon(icon)
 pygame.display.set_caption('idk yet')
 finished_time = 0
 running = True
-
+mousecodx = 0
+mousecody = 0
 #sprites
 bg = pygame.image.load('other sprites/bg.png')
 char1 = pygame.image.load('player\Player-main.png')
@@ -23,7 +24,7 @@ char = pygame.transform.scale(char1, (50, 50))
 
 left_b = 600
 right_b = 600
-clockspeed = 60
+clockspeed = 1600
 def gameclockup():
     global clockspeed
     clockspeed = (30 + clockspeed)
@@ -52,25 +53,32 @@ class Player:
         keystate = pygame.key.get_pressed()
         if keystate[pygame.K_a]:
             self.speedx = +10
+            
             for i in range(num_of_enemies):
-                enemy1X[i] += 15
+                enemy1X[i] += 10
+            for i in range(num_of_astro):
+                astox[i] += 10
         elif keystate[pygame.K_d]:
             self.speedx = -10
             for i in range(num_of_enemies):
-                enemy1X[i] -= 15
+                enemy1X[i] -= 10
+            for i in range(num_of_astro):
+                astox[i] -= 10
         else:
             self.speedx = 0
 
         if keystate[pygame.K_w]:
             self.speedy = +10
             for i in range(num_of_enemies):
-                enemy1Y[i] += 15
-
+                enemy1Y[i] += 10
+            for i in range(num_of_astro):
+                astoy[i] += 10
         elif keystate[pygame.K_s]:
             self.speedy = -10
             for i in range(num_of_enemies):
-                enemy1Y[i] -= 15
-        
+                enemy1Y[i] -= 10
+            for i in range(num_of_astro):
+                astoy[i] -= 10
         else:
             self.speedy = 0
             
@@ -101,7 +109,7 @@ alive_enemies = 6
 Enemyimg1 = []
 enemy1X = []
 enemy1Y = []
-num_of_enemies = 17
+num_of_enemies = 10
 
 for i in range(num_of_enemies):
     player = Player()
@@ -111,7 +119,27 @@ for i in range(num_of_enemies):
     enemy1X.append(random.randint(0, 500))
     
     print("enemy spawned")
-        
+
+#randomobject
+astoimg = []
+astox = []
+astoy = []
+num_of_astro = 30
+for i in range(num_of_astro):
+    astro1 = pygame.image.load('astros/astro1.png')
+    astro2 = pygame.image.load('astros/astro2.png')
+    astro3 = pygame.image.load('astros/astro3.png')
+    astrorand = (random.randint(1, 1))
+    print(astrorand)
+    if astrorand == 1:
+        astoimg.append(astro1)
+    elif astrorand == 2:
+        astoimg.append(astro2)
+    elif astrorand == 3:
+        astoimg.append(astro3)
+    astox.append(random.randint(0, 500))
+    astoy.append(random.randint(0, 500))
+
 def update_display():
     global end, start
     end = time.time()
@@ -121,75 +149,118 @@ def update_display():
     frametime = font.render(f'Frame time {finished_time}',True,(255, 255, 255))
     wn.blit(text, (0,0))
     wn.blit(coords, (0,20))
-    
-    wn.blit(frametime, (0,40))
+    wn.blit(mousecoords, (0,40))
+    wn.blit(frametime, (0,60))
     
     
 def enemy(x, y, i):
     for i in range(num_of_enemies):
         wn.blit(Enemyimg1[i], (x, y))
+
+def astro_update(x, y, i):
+    for i in range(num_of_astro):
+        wn.blit(astoimg[i], (x,y))
+
 def game_over():
     global running
+    time.sleep(1)
     running = False
 def game_loop():
     global clockspeed
     player = Player()
 
-    while running:
-        global playerx, playery, text, font, coords, frametime, start
-        start = time.time()
-        for event in pygame.event.get():
-            if event.type == pygame.quit:
-                pygame.quit()
-                quit()
-        playerx = player.rect.x
-        playery = player.rect.y
-        player.update()
-        font = pygame.font.Font(None,30)
-        text = font.render(f'clock speed is {clockspeed}',True,(255, 255, 255))
-        coords = font.render(f'Coords x,{player.rect.x} y,{player.rect.y}',True,(255,255,255))
+
+while running:
+    global playerx, playery, text, font, coords, frametime, start, mousecoords
+    start = time.time()
+    for event in pygame.event.get():
+        if event.type == pygame.quit:
+            pygame.quit()
+            quit()
+    
+    playerx = player.rect.x
+    playery = player.rect.y
+    player.update()
+    font = pygame.font.Font(None,30)
+    text = font.render(f'clock speed is {clockspeed}',True,(255, 255, 255))
+    coords = font.render(f'Coords x,{player.rect.x} y,{player.rect.y}',True,(255,255,255))
+    [playercoordsX, playercoordsY] = player.mouse
+    mousecodx = playercoordsX - player.rect.x - 300
+    mousecody = playercoordsY - player.rect.y - 300
+    mousecoords = font.render(f'mouse Coords x,{mousecodx} y,{mousecody}',True,(255,255,255))
         
-        [playercoordsX, playercoordsY] = player.mouse
+    
         
-        update_display()
-        wn.blit(player.image, (player.mouse))
+    update_display()
+    wn.blit(player.image, (player.mouse))
 
-        for i in range(num_of_enemies):
-            if playercoordsX > enemy1X[i]:
-                enemy1X[i] += 1
-            if playercoordsX < enemy1X[i]:
-                enemy1X[i] -= 1
-            if playercoordsY > enemy1Y[i]:
-                enemy1Y[i] += 1
-            elif playercoordsY < enemy1Y[i]:
-                enemy1Y[i] -= 1
-            enemy(enemy1X[i], enemy1Y[i], i)
-            distance = math.sqrt ((math.pow(enemy1X[i]-playercoordsX,2)) + (math.pow(enemy1Y[i]-playercoordsY,2)))
+    for i in range(num_of_enemies):
+        if playercoordsX > enemy1X[i]:
+            enemy1X[i] += 1
+        if playercoordsX < enemy1X[i]:
+            enemy1X[i] -= 1
+        if playercoordsY > enemy1Y[i]:
+            enemy1Y[i] += 1
+        elif playercoordsY < enemy1Y[i]:
+            enemy1Y[i] -= 1
 
-            distanceX = enemy1X[i] - playercoordsX
-            distanceY = enemy1Y[i] - playercoordsY
-            print(distanceX)
-            if distance < 53:
-                #game_over()
-                if distanceX < -45:
-                    enemy1X[i] -= 2
-                if distanceX < -30:
-                    enemy1X[i] -= 10
-                if distanceX > 45:
-                    enemy1X[i] += 2
-                if distanceX > 30:
-                    enemy1X[i] += 10
+        astro_update(astox[i], astoy[i], i)
+        enemy(enemy1X[i], enemy1Y[i], i)
 
-                if distanceY < -45:
-                    enemy1Y[i] -= 2
-                if distanceY < -30:
-                    enemy1Y[i] -= 10
-                if distanceY > 45:
-                    enemy1Y[i] += 2
-                if distanceY > 30:
-                    enemy1Y[i] += 10
-                print('aaaaaaaaaaaa')
+        distance = math.sqrt ((math.pow(enemy1X[i]-playercoordsX,2)) + (math.pow(enemy1Y[i]-playercoordsY,2)))
+        
+
+      
+        distanceX = enemy1X[i] - playercoordsX
+        distanceY = enemy1Y[i] - playercoordsY
             
+        if distance < 35:
+            if distanceX < -35:
+                enemy1X[i] -= 2
+            if distanceX < -10:
+                enemy1X[i] -= 10
+            if distanceX > 35:
+                enemy1X[i] += 2
+            if distanceX > 10:
+                enemy1X[i] += 10
+
+            if distanceY < -35:
+                enemy1Y[i] -= 2
+            if distanceY < -10:
+                enemy1Y[i] -= 10
+            if distanceY > 35:
+                enemy1Y[i] += 2
+            if distanceY > 10:
+                enemy1Y[i] += 10
+
+    for i in range(num_of_astro):
+        astrodisx = astox[i] - playercoordsX
+        astrodisy = astoy[i] - playercoordsY
+        distanceasto = math.sqrt ((math.pow(astox[i]-playercoordsX,2)) + (math.pow(astoy[i]-playercoordsY,2)))    
+        if distanceasto < 90:
+            if astrodisx < -75:
+                astox[i] -= 2
+            if astrodisx < -50:
+                astox[i] -= 10
+            if astrodisx > 75:
+                astox[i] += 2
+            if astrodisx > 50:
+                astox[i] += 10
+            
+            if astrodisy < -75:
+                astoy[i] -= 2
+            if astrodisy < -50:
+                astoy[i] -= 10
+            if astrodisy > 75:
+                astoy[i] += 2
+            if astrodisy > 50:
+                astoy[i] += 10
+
+
+
+            if distanceasto > 1500:
+                astoy[i] = random.randint(-500, 1000)
+                astox[i] = random.randint(-500, 1000)
                 #print(distance)
         
             
@@ -200,7 +271,7 @@ def game_loop():
         pygame.display.update()
         #badthings()
         
-        
+     
         mainClock.tick(clockspeed)
 
 
