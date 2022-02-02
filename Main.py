@@ -1,5 +1,7 @@
 
+from dis import dis
 import math
+from turtle import distance
 import pygame, time, random, sys
 mainClock = pygame.time.Clock()
 
@@ -12,7 +14,7 @@ icon = pygame.image.load("other sprites/xander.png")
 pygame.display.set_icon(icon)
 pygame.display.set_caption('idk yet')
 finished_time = 0
-
+running = True
 
 #sprites
 bg = pygame.image.load('other sprites/bg.png')
@@ -50,20 +52,24 @@ class Player:
         keystate = pygame.key.get_pressed()
         if keystate[pygame.K_a]:
             self.speedx = +10
-            enemy1X[i] += 15
+            for i in range(num_of_enemies):
+                enemy1X[i] += 15
         elif keystate[pygame.K_d]:
             self.speedx = -10
-            enemy1X[i] -= 15
+            for i in range(num_of_enemies):
+                enemy1X[i] -= 15
         else:
             self.speedx = 0
 
         if keystate[pygame.K_w]:
             self.speedy = +10
-            enemy1Y[i] += 15
+            for i in range(num_of_enemies):
+                enemy1Y[i] += 15
 
         elif keystate[pygame.K_s]:
             self.speedy = -10
-            enemy1Y[i] -= 15
+            for i in range(num_of_enemies):
+                enemy1Y[i] -= 15
         
         else:
             self.speedy = 0
@@ -98,10 +104,11 @@ enemy1Y = []
 num_of_enemies = 17
 
 for i in range(num_of_enemies):
-    player = Player() 
-    Enemyimg1.append(pygame.image.load('badthings that kill/badthing.png'))
-    enemy1Y.append(random.randint(-200, 200))
-    enemy1X.append(random.randint(-200, 200))
+    player = Player()
+    enemyimg = pygame.image.load('badthings that kill/badthing.png')
+    Enemyimg1.append(pygame.transform.scale(enemyimg, (50, 50)))
+    enemy1Y.append(random.randint(0, 500))
+    enemy1X.append(random.randint(0, 500))
     
     print("enemy spawned")
         
@@ -121,12 +128,14 @@ def update_display():
 def enemy(x, y, i):
     for i in range(num_of_enemies):
         wn.blit(Enemyimg1[i], (x, y))
-    
+def game_over():
+    global running
+    running = False
 def game_loop():
     global clockspeed
     player = Player()
 
-    while True:
+    while running:
         global playerx, playery, text, font, coords, frametime, start
         start = time.time()
         for event in pygame.event.get():
@@ -147,18 +156,42 @@ def game_loop():
 
         for i in range(num_of_enemies):
             if playercoordsX > enemy1X[i]:
-                enemy1X[i] += 4
+                enemy1X[i] += 1
             if playercoordsX < enemy1X[i]:
-                enemy1X[i] -= 4
+                enemy1X[i] -= 1
             if playercoordsY > enemy1Y[i]:
-                enemy1Y[i] += 4
-            if playercoordsY < enemy1Y[i]:
-                enemy1Y[i] -= 4
+                enemy1Y[i] += 1
+            elif playercoordsY < enemy1Y[i]:
+                enemy1Y[i] -= 1
             enemy(enemy1X[i], enemy1Y[i], i)
+            distance = math.sqrt ((math.pow(enemy1X[i]-playercoordsX,2)) + (math.pow(enemy1Y[i]-playercoordsY,2)))
 
-            if enemy1X[i]
-                
-        print(enemy1Y[i])
+            distanceX = enemy1X[i] - playercoordsX
+            distanceY = enemy1Y[i] - playercoordsY
+            print(distanceX)
+            if distance < 53:
+                #game_over()
+                if distanceX < -45:
+                    enemy1X[i] -= 2
+                if distanceX < -30:
+                    enemy1X[i] -= 10
+                if distanceX > 45:
+                    enemy1X[i] += 2
+                if distanceX > 30:
+                    enemy1X[i] += 10
+
+                if distanceY < -45:
+                    enemy1Y[i] -= 2
+                if distanceY < -30:
+                    enemy1Y[i] -= 10
+                if distanceY > 45:
+                    enemy1Y[i] += 2
+                if distanceY > 30:
+                    enemy1Y[i] += 10
+                print('aaaaaaaaaaaa')
+            
+                #print(distance)
+        
             
         
 
