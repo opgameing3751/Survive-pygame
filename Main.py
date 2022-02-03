@@ -17,14 +17,20 @@ finished_time = 0
 running = True
 mousecodx = 0
 mousecody = 0
+health = 100
+warn = 0
 #sprites
 bg = pygame.image.load('other sprites/bg.png')
 char1 = pygame.image.load('player\Player-main.png')
 char = pygame.transform.scale(char1, (50, 50))
-
+astro1 = pygame.image.load('astros/astro1.png')
+astro2 = pygame.image.load('astros/astro2.png')
+astro3 = pygame.image.load('astros/astro3.png')
+almost_dead_screen = pygame.image.load("other sprites/almost dead screen.png")
 left_b = 600
 right_b = 600
-clockspeed = 1600
+clockspeed = 2680
+
 def gameclockup():
     global clockspeed
     clockspeed = (30 + clockspeed)
@@ -79,6 +85,9 @@ class Player:
                 enemy1Y[i] -= 10
             for i in range(num_of_astro):
                 astoy[i] -= 10
+        elif keystate[pygame.K_SPACE]:
+            astrospawn()
+
         else:
             self.speedy = 0
             
@@ -109,14 +118,15 @@ alive_enemies = 6
 Enemyimg1 = []
 enemy1X = []
 enemy1Y = []
-num_of_enemies = 10
+num_of_enemies = 60
 
 for i in range(num_of_enemies):
     player = Player()
-    enemyimg = pygame.image.load('badthings that kill/badthing.png')
+    enemyimg = pygame.image.load('badthings that kill/badthing.png').convert_alpha()
     Enemyimg1.append(pygame.transform.scale(enemyimg, (50, 50)))
-    enemy1Y.append(random.randint(0, 500))
-    enemy1X.append(random.randint(0, 500))
+    enemy1Y.append(random.randint(-2000, 2500))
+    enemy1X.append(random.randint(-2000, 2500))
+    
     
     print("enemy spawned")
 
@@ -124,32 +134,47 @@ for i in range(num_of_enemies):
 astoimg = []
 astox = []
 astoy = []
-num_of_astro = 30
-for i in range(num_of_astro):
-    astro1 = pygame.image.load('astros/astro1.png')
-    astro2 = pygame.image.load('astros/astro2.png')
-    astro3 = pygame.image.load('astros/astro3.png')
-    astrorand = (random.randint(1, 1))
-    print(astrorand)
-    if astrorand == 1:
-        astoimg.append(astro1)
-    elif astrorand == 2:
-        astoimg.append(astro2)
-    elif astrorand == 3:
-        astoimg.append(astro3)
-    astox.append(random.randint(0, 500))
-    astoy.append(random.randint(0, 500))
+num_of_astro = 60
+def astrospawn():
+    
+    for i in range(num_of_astro):
+        
+        astrorand = (random.randint(1, 3))
+        print(astrorand)
+        if astrorand == 1:
+            astoimg.append(astro1)
+        elif astrorand == 2:
+            astoimg.append(astro2)
+        elif astrorand == 3:
+            astoimg.append(astro3)
+        astox.append(random.randint(-2000, 2500))
+        astoy.append(random.randint(-2000, 2500))
 
+'''class astro():
+    def __init__(self):
+        self.image = astro1, astro2, astro3
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
+
+        self.rect = self.image.get_rect()
+        self.rect.x = int(wn_width * 0.5)
+        self.rect.y = int(wn_height * 0.5)
+
+        self.speedx = 0
+        self.speedy = 0
+        self.rect.x = self.rect.x - 5000
+        self.rect.y = self.rect.y - 5000'''
 def update_display():
     global end, start
-    end = time.time()
-    
-    finished_time = (end - start)
-    wn.blit(bg, (player.rect.x, player.rect.y))
-    frametime = font.render(f'Frame time {finished_time}',True,(255, 255, 255))
+    health_display = font.render(f'Health: {health}',True,(255,255,255))
+    wn.blit(bg, (0,0))
     wn.blit(text, (0,0))
     wn.blit(coords, (0,20))
     wn.blit(mousecoords, (0,40))
+    wn.blit(health_display, (0, 80))
+    end = time.time()
+    finished_time = (end - start)
+    frametime = font.render(f'Frame time {finished_time}',True,(255, 255, 255))
     wn.blit(frametime, (0,60))
     
     
@@ -165,11 +190,13 @@ def game_over():
     global running
     time.sleep(1)
     running = False
+    
 def game_loop():
     global clockspeed
     player = Player()
-
-
+def almost_Dead():
+    wn.blit(almost_dead_screen, (0,0))
+astrospawn()
 while running:
     global playerx, playery, text, font, coords, frametime, start, mousecoords
     start = time.time()
@@ -194,17 +221,26 @@ while running:
     update_display()
     wn.blit(player.image, (player.mouse))
 
+    print(health)
+    if health <= 0:
+        game_over()
+    if health <= 30:
+        warn = 1
+    if warn == 1:
+        almost_Dead()
+
     for i in range(num_of_enemies):
         if playercoordsX > enemy1X[i]:
-            enemy1X[i] += 1
+            enemy1X[i] += 5
         if playercoordsX < enemy1X[i]:
-            enemy1X[i] -= 1
+            enemy1X[i] -= 5
         if playercoordsY > enemy1Y[i]:
-            enemy1Y[i] += 1
+            enemy1Y[i] += 5
         elif playercoordsY < enemy1Y[i]:
-            enemy1Y[i] -= 1
+            enemy1Y[i] -= 5
 
         astro_update(astox[i], astoy[i], i)
+       
         enemy(enemy1X[i], enemy1Y[i], i)
 
         distance = math.sqrt ((math.pow(enemy1X[i]-playercoordsX,2)) + (math.pow(enemy1Y[i]-playercoordsY,2)))
@@ -217,21 +253,31 @@ while running:
         if distance < 35:
             if distanceX < -35:
                 enemy1X[i] -= 2
+                
             if distanceX < -10:
                 enemy1X[i] -= 10
+               
             if distanceX > 35:
                 enemy1X[i] += 2
+                
             if distanceX > 10:
                 enemy1X[i] += 10
-
             if distanceY < -35:
                 enemy1Y[i] -= 2
+                
             if distanceY < -10:
                 enemy1Y[i] -= 10
             if distanceY > 35:
                 enemy1Y[i] += 2
+                
             if distanceY > 10:
                 enemy1Y[i] += 10
+
+        if distance < 35:
+            health -= 1
+        if distance > 3000:
+            enemy1Y[i] = random.randint(-2000, 2500)
+            enemy1X[i] = random.randint(-2000, 2500)
 
     for i in range(num_of_astro):
         astrodisx = astox[i] - playercoordsX
@@ -257,11 +303,11 @@ while running:
                 astoy[i] += 10
 
 
-
-            if distanceasto > 1500:
-                astoy[i] = random.randint(-500, 1000)
-                astox[i] = random.randint(-500, 1000)
-                #print(distance)
+        
+        if distanceasto > 3000:
+            astoy[i] = random.randint(-2000, 2500)
+            astox[i] = random.randint(-2000, 2500)
+            #print(distance)
         
             
         
@@ -273,7 +319,7 @@ while running:
         
      
         mainClock.tick(clockspeed)
-
+    
 
 
 
