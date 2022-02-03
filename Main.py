@@ -17,8 +17,10 @@ finished_time = 0
 running = True
 mousecodx = 0
 mousecody = 0
-health = 100
+health = 1000
 warn = 0
+distanceasto = 600
+distance = 600
 #sprites
 bg = pygame.image.load('other sprites/bg.png')
 char1 = pygame.image.load('player\Player-main.png')
@@ -27,9 +29,10 @@ astro1 = pygame.image.load('astros/astro1.png')
 astro2 = pygame.image.load('astros/astro2.png')
 astro3 = pygame.image.load('astros/astro3.png')
 almost_dead_screen = pygame.image.load("other sprites/almost dead screen.png")
+startgameimg = pygame.image.load('other sprites\start.png')
 left_b = 600
 right_b = 600
-clockspeed = 2680
+clockspeed = 60
 
 def gameclockup():
     global clockspeed
@@ -37,6 +40,17 @@ def gameclockup():
 def gameclockdown():
     global clockspeed
     clockspeed = (clockspeed - 30)
+startgame = True
+'''while startgame:
+    wn.blit(startgameimg, (0,0))
+    
+    keystate = pygame.key.get_pressed()
+    if keystate[pygame.K_SPACE]:
+        running = True
+        startgame = False
+    print("gametick")
+    pygame.display.update()
+    mainClock.tick(30)'''
 
 class Player:
     def __init__(self):
@@ -113,34 +127,17 @@ class Player:
         #    self.speedy = 600
         
 
-#Enemy
-alive_enemies = 6
-Enemyimg1 = []
-enemy1X = []
-enemy1Y = []
-num_of_enemies = 60
-
-for i in range(num_of_enemies):
-    player = Player()
-    enemyimg = pygame.image.load('badthings that kill/badthing.png').convert_alpha()
-    Enemyimg1.append(pygame.transform.scale(enemyimg, (50, 50)))
-    enemy1Y.append(random.randint(-2000, 2500))
-    enemy1X.append(random.randint(-2000, 2500))
-    
-    
-    print("enemy spawned")
-
 #randomobject
 astoimg = []
 astox = []
 astoy = []
-num_of_astro = 60
+distanceasto = []
+num_of_astro = 100
 def astrospawn():
     
     for i in range(num_of_astro):
         
         astrorand = (random.randint(1, 3))
-        print(astrorand)
         if astrorand == 1:
             astoimg.append(astro1)
         elif astrorand == 2:
@@ -149,6 +146,27 @@ def astrospawn():
             astoimg.append(astro3)
         astox.append(random.randint(-2000, 2500))
         astoy.append(random.randint(-2000, 2500))
+        distanceasto.append(0)
+
+#Enemy
+alive_enemies = 6
+Enemyimg1 = []
+enemy1X = []
+enemy1Y = []
+distance = []
+num_of_enemies = 200
+
+for i in range(num_of_enemies):
+    player = Player()
+    enemyimg = pygame.image.load('badthings that kill/badthing.png').convert_alpha()
+    Enemyimg1.append(pygame.transform.scale(enemyimg, (50, 50)))
+    enemy1Y.append(random.randint(-2000, 2500))
+    enemy1X.append(random.randint(-2000, 2500))
+    distance.append(0)
+    
+    print("enemy spawned")
+
+
 
 '''class astro():
     def __init__(self):
@@ -180,11 +198,14 @@ def update_display():
     
 def enemy(x, y, i):
     for i in range(num_of_enemies):
-        wn.blit(Enemyimg1[i], (x, y))
+        if distance[i] <= 600:
+            wn.blit(Enemyimg1[i], (x, y))
 
 def astro_update(x, y, i):
     for i in range(num_of_astro):
-        wn.blit(astoimg[i], (x,y))
+        
+        if distanceasto[i] <= 600:
+            wn.blit(astoimg[i], (x,y))
 
 def game_over():
     global running
@@ -203,7 +224,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.quit:
             pygame.quit()
-            quit()
+            running = False
     
     playerx = player.rect.x
     playery = player.rect.y
@@ -221,7 +242,7 @@ while running:
     update_display()
     wn.blit(player.image, (player.mouse))
 
-    print(health)
+    
     if health <= 0:
         game_over()
     if health <= 30:
@@ -239,18 +260,18 @@ while running:
         elif playercoordsY < enemy1Y[i]:
             enemy1Y[i] -= 5
 
-        astro_update(astox[i], astoy[i], i)
+        
        
         enemy(enemy1X[i], enemy1Y[i], i)
-
-        distance = math.sqrt ((math.pow(enemy1X[i]-playercoordsX,2)) + (math.pow(enemy1Y[i]-playercoordsY,2)))
+        
+        distance[i] = math.sqrt ((math.pow(enemy1X[i]-playercoordsX,2)) + (math.pow(enemy1Y[i]-playercoordsY,2)))
         
 
       
         distanceX = enemy1X[i] - playercoordsX
         distanceY = enemy1Y[i] - playercoordsY
             
-        if distance < 35:
+        if distance[i] < 35:
             if distanceX < -35:
                 enemy1X[i] -= 2
                 
@@ -273,17 +294,18 @@ while running:
             if distanceY > 10:
                 enemy1Y[i] += 10
 
-        if distance < 35:
+        if distance[i] < 35:
             health -= 1
-        if distance > 3000:
-            enemy1Y[i] = random.randint(-2000, 2500)
-            enemy1X[i] = random.randint(-2000, 2500)
+        if distance[i] > 2000:
+            enemy1Y[i] = random.randint(-2000, 2000)
+            enemy1X[i] = random.randint(-2000, 2000)
 
     for i in range(num_of_astro):
         astrodisx = astox[i] - playercoordsX
         astrodisy = astoy[i] - playercoordsY
-        distanceasto = math.sqrt ((math.pow(astox[i]-playercoordsX,2)) + (math.pow(astoy[i]-playercoordsY,2)))    
-        if distanceasto < 90:
+        
+        distanceasto[i] = math.sqrt ((math.pow(astox[i]-playercoordsX,2)) + (math.pow(astoy[i]-playercoordsY,2)))    
+        if distanceasto[i] < 90:
             if astrodisx < -75:
                 astox[i] -= 2
             if astrodisx < -50:
@@ -301,24 +323,54 @@ while running:
                 astoy[i] += 2
             if astrodisy > 50:
                 astoy[i] += 10
-
+        astro_update(astox[i], astoy[i], i)
 
         
-        if distanceasto > 3000:
-            astoy[i] = random.randint(-2000, 2500)
-            astox[i] = random.randint(-2000, 2500)
+        if distanceasto[i] > 2000:
+            astoy[i] = random.randint(-2000, 2000)
+            astox[i] = random.randint(-2000, 2000)
             #print(distance)
         
-            
+    for i in range(num_of_astro):
+        astro_enemy = math.sqrt ((math.pow(astox[i]-enemy1X[i],2)) + (math.pow(astoy[i]-enemy1Y[i],2)))
+
+        astro_enemyX = astox[i] - enemy1X[i]
+        astro_enemyY = astoy[i] - enemy1Y[i]
         
+        if astro_enemy < 90:
+            if astro_enemyX < -35:
+                astox[i] -= 10
+                
+            if astro_enemyX < -10:
+                astox[i] -= 10
+               
+            if astro_enemyX > 35:
+                astox[i] += 2
+                
+            if astro_enemyX > 10:
+                astox[i] += 10
+
+
+            if astro_enemyY < -35:
+                astoy[i] -= 2
+                
+            if astro_enemyY < -10:
+                astoy[i] -= 10
+
+            if astro_enemyY > 35:
+                astoy[i] += 2
+                
+            if astro_enemyY > 10:
+                astoy[i] += 10
+
 
 
         #wn.blit(char, (300, 300))
-        pygame.display.update()
+    pygame.display.update()
         #badthings()
         
      
-        mainClock.tick(clockspeed)
+    mainClock.tick(clockspeed)
     
 
 
