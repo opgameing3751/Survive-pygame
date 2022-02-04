@@ -1,8 +1,18 @@
 
 from dis import dis
 import math
-from turtle import distance
+from turtle import distance, up
 import pygame, time, random, sys
+from tkinter import *
+from PIL import Image, ImageTk
+
+
+root = Tk()
+root.geometry('250x150')
+root.title('Widgets Tutorial')
+
+root.mainloop()
+
 mainClock = pygame.time.Clock()
 
 pygame.init()
@@ -21,6 +31,9 @@ health = 1000
 warn = 0
 distanceasto = 600
 distance = 600
+on_screen_enemy_count = 0
+on_screen_astro_count = 0
+updatespertick = 0
 #sprites
 bg = pygame.image.load('other sprites/bg.png')
 char1 = pygame.image.load('player\Player-main.png')
@@ -41,16 +54,7 @@ def gameclockdown():
     global clockspeed
     clockspeed = (clockspeed - 30)
 startgame = True
-'''while startgame:
-    wn.blit(startgameimg, (0,0))
-    
-    keystate = pygame.key.get_pressed()
-    if keystate[pygame.K_SPACE]:
-        running = True
-        startgame = False
-    print("gametick")
-    pygame.display.update()
-    mainClock.tick(30)'''
+
 
 class Player:
     def __init__(self):
@@ -167,29 +171,20 @@ for i in range(num_of_enemies):
     print("enemy spawned")
 
 
-
-'''class astro():
-    def __init__(self):
-        self.image = astro1, astro2, astro3
-        self.width = self.image.get_width()
-        self.height = self.image.get_height()
-
-        self.rect = self.image.get_rect()
-        self.rect.x = int(wn_width * 0.5)
-        self.rect.y = int(wn_height * 0.5)
-
-        self.speedx = 0
-        self.speedy = 0
-        self.rect.x = self.rect.x - 5000
-        self.rect.y = self.rect.y - 5000'''
 def update_display():
-    global end, start
+    global end, start, on_screen_enemy_count, updatespertick
+    updatespertick += 1
     health_display = font.render(f'Health: {health}',True,(255,255,255))
     wn.blit(bg, (0,0))
     wn.blit(text, (0,0))
     wn.blit(coords, (0,20))
     wn.blit(mousecoords, (0,40))
-    wn.blit(health_display, (0, 80))
+    wn.blit(health_display, (0, 120))
+    wn.blit(enemyscreen, (0, 80))
+    wn.blit(astroscreen, (0,100))
+    wn.blit(updates, (0, 140))
+    on_screen_enemy_count = 0
+    updatespertick = 0
     end = time.time()
     finished_time = (end - start)
     frametime = font.render(f'Frame time {finished_time}',True,(255, 255, 255))
@@ -197,17 +192,31 @@ def update_display():
     
     
 def enemy(x, y, i):
+    global updatespertick
     for i in range(num_of_enemies):
         if distance[i] <= 600:
+            updatespertick += 1
             wn.blit(Enemyimg1[i], (x, y))
 
-def astro_update(x, y, i):
+def on_screen_update():
+    global on_screen_enemy_count, on_screen_astro_count
+    for i in range(num_of_enemies):
+        if distance[i] <= 600:
+            on_screen_enemy_count += 1
     for i in range(num_of_astro):
-        
         if distanceasto[i] <= 600:
+            on_screen_astro_count += 1
+
+def astro_update(x, y, i):
+    global updatespertick
+    for i in range(num_of_astro):
+        if distanceasto[i] <= 600:
+            updatespertick += 1
             wn.blit(astoimg[i], (x,y))
 
 def game_over():
+    global updatespertick
+    updatespertick += 1
     global running
     time.sleep(1)
     running = False
@@ -216,10 +225,13 @@ def game_loop():
     global clockspeed
     player = Player()
 def almost_Dead():
+    global updatespertick
+    updatespertick += 1
     wn.blit(almost_dead_screen, (0,0))
 astrospawn()
 while running:
     global playerx, playery, text, font, coords, frametime, start, mousecoords
+    
     start = time.time()
     for event in pygame.event.get():
         if event.type == pygame.quit:
@@ -228,10 +240,14 @@ while running:
     
     playerx = player.rect.x
     playery = player.rect.y
+    updatespertick += 1
     player.update()
     font = pygame.font.Font(None,30)
     text = font.render(f'clock speed is {clockspeed}',True,(255, 255, 255))
     coords = font.render(f'Coords x,{player.rect.x} y,{player.rect.y}',True,(255,255,255))
+    astroscreen = font.render(f'Astros rendered {on_screen_astro_count}',True,(255,255,255))
+    enemyscreen = font.render(f'Enemys rendered {on_screen_enemy_count}',True,(255,255,255))
+    updates = font.render(f'updates per game tick {updatespertick}',True,(255,255,255))
     [playercoordsX, playercoordsY] = player.mouse
     mousecodx = playercoordsX - player.rect.x - 300
     mousecody = playercoordsY - player.rect.y - 300
@@ -306,6 +322,7 @@ while running:
         
         distanceasto[i] = math.sqrt ((math.pow(astox[i]-playercoordsX,2)) + (math.pow(astoy[i]-playercoordsY,2)))    
         if distanceasto[i] < 90:
+            updatespertick += 1
             if astrodisx < -75:
                 astox[i] -= 2
             if astrodisx < -50:
@@ -338,6 +355,7 @@ while running:
         astro_enemyY = astoy[i] - enemy1Y[i]
         
         if astro_enemy < 90:
+            updatespertick += 1
             if astro_enemyX < -35:
                 astox[i] -= 10
                 
@@ -366,10 +384,12 @@ while running:
 
 
         #wn.blit(char, (300, 300))
+        
     pygame.display.update()
         #badthings()
-        
-     
+    on_screen_astro_count = 0
+    on_screen_update()
+    
     mainClock.tick(clockspeed)
     
 
