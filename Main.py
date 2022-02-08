@@ -1,5 +1,6 @@
 
 from dis import dis
+from email.mime import image
 import math
 from turtle import distance, up
 import pygame, time, random, sys
@@ -11,6 +12,17 @@ import psutil, os
 health = 1000
 num_of_astro = 100
 num_of_enemies = 500
+running = 0
+def startgame():
+    global num_of_astro, num_of_enemies, running
+    running = 1
+    if num_of_astro == 0:
+        num_of_astro = 100
+    if num_of_enemies == 0:
+        num_of_enemies = 500
+    if health == 0:
+        health == 100
+    root.destroy
 
 root = Tk()
 root.geometry('600x600')
@@ -19,10 +31,12 @@ background = PhotoImage(file=r'other sprites\start.png')
 background1 = Label(root, image=background)
 background1.place(x=-2, y=-2)
 
-#startbutton = PhotoImage(file=r'other sprites/playbutton.png')
-#startbutton.place(x=298, y=500)
+startbuttonpng = PhotoImage(file=r'other sprites/playbutton.png')
 
-#button = Button(root, )
+startbutton = Button(root, image=startbuttonpng, command=startgame)
+startbutton.place(x=198, y=300)
+
+
 
 root.mainloop()
 
@@ -37,7 +51,7 @@ icon = pygame.image.load("other sprites/xander.png")
 pygame.display.set_icon(icon)
 pygame.display.set_caption('idk yet')
 finished_time = 0
-running = 1
+
 mousecodx = 0
 mousecody = 0
 FOV = 1000
