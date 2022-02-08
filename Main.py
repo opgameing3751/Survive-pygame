@@ -8,9 +8,21 @@ from tkinter import *
 from PIL import Image, ImageTk
 import psutil, os
 
+health = 1000
+num_of_astro = 100
+num_of_enemies = 500
+
 root = Tk()
-root.geometry('250x150')
+root.geometry('600x600')
 root.title('Widgets Tutorial')
+background = PhotoImage(file=r'other sprites\start.png')
+background1 = Label(root, image=background)
+background1.place(x=-2, y=-2)
+
+#startbutton = PhotoImage(file=r'other sprites/playbutton.png')
+#startbutton.place(x=298, y=500)
+
+#button = Button(root, )
 
 root.mainloop()
 
@@ -28,7 +40,7 @@ finished_time = 0
 running = 1
 mousecodx = 0
 mousecody = 0
-health = 1000
+FOV = 1000
 warn = 0
 fps = 0
 distanceasto = 600
@@ -43,6 +55,19 @@ char = pygame.transform.scale(char1, (50, 50))
 astro1 = pygame.image.load('astros/astro1.png')
 astro2 = pygame.image.load('astros/astro2.png')
 astro3 = pygame.image.load('astros/astro3.png')
+astro4 = pygame.image.load('astros/astro4.png')
+astro5 = pygame.image.load('astros/astro5.png')
+astro6 = pygame.image.load('astros/astro6.png')
+astro7 = pygame.image.load('astros/astro7.png')
+astro8 = pygame.image.load('astros/astro8.png')
+astro9 = pygame.image.load('astros/astro9.png')
+astro10 = pygame.image.load('astros/astro10.png')
+astro11 = pygame.image.load('astros/astro11.png')
+astro12 = pygame.image.load('astros/astro12.png')
+astro13 = pygame.image.load('astros/astro13.png')
+astro14 = pygame.image.load('astros/astro14.png')
+astro15 = pygame.image.load('astros/astro15.png')
+astro16 = pygame.image.load('astros/astro16.png')
 almost_dead_screen1 = pygame.image.load("other sprites/almost dead screen.png")
 almost_dead_screen = pygame.transform.scale(almost_dead_screen1, (1920, 1080))
 startgameimg = pygame.image.load('other sprites\start.png')
@@ -139,18 +164,45 @@ astoimg = []
 astox = []
 astoy = []
 distanceasto = []
-num_of_astro = 100
+
 def astrospawn():
     
     for i in range(num_of_astro):
         
-        astrorand = (random.randint(1, 3))
+        astrorand = (random.randint(1, 16))
         if astrorand == 1:
             astoimg.append(astro1)
         elif astrorand == 2:
             astoimg.append(astro2)
         elif astrorand == 3:
             astoimg.append(astro3)
+        elif astrorand == 4:
+            astoimg.append(astro4)
+        elif astrorand == 5:
+            astoimg.append(astro5)
+        elif astrorand == 6:
+            astoimg.append(astro6)
+        elif astrorand == 7:
+            astoimg.append(astro7)
+        elif astrorand == 8:
+            astoimg.append(astro8)
+        elif astrorand == 9:
+            astoimg.append(astro9)
+        elif astrorand == 10:
+            astoimg.append(astro10)
+        elif astrorand == 11:
+            astoimg.append(astro11)
+        elif astrorand == 12:
+            astoimg.append(astro12)
+        elif astrorand == 13:
+            astoimg.append(astro13)
+        elif astrorand == 14:
+            astoimg.append(astro14)
+        elif astrorand == 15:
+            astoimg.append(astro15)
+        elif astrorand == 16:
+            astoimg.append(astro16)
+        
         astox.append(random.randint(-2000, 2500))
         astoy.append(random.randint(-2000, 2500))
         distanceasto.append(0)
@@ -161,7 +213,7 @@ Enemyimg1 = []
 enemy1X = []
 enemy1Y = []
 distance = []
-num_of_enemies = 500
+
 
 for i in range(num_of_enemies):
     player = Player()
@@ -308,7 +360,7 @@ while running == 1:
             enemy1Y[i] = random.randint(-4000, 4000)
             enemy1X[i] = random.randint(-4000, 4000)
             
-        if distance[i] <= 1000:
+        if distance[i] <= FOV:
             updatespertick += 1
             wn.blit(Enemyimg1[i], (enemy1X[i], enemy1Y[i]))
 
@@ -340,7 +392,7 @@ while running == 1:
             if astrodisy > 50:
                 astoy[i] += 10
         #astro_update(astox[i], astoy[i], i)
-        if distanceasto[i] <= 1000:
+        if distanceasto[i] <= FOV:
             updatespertick += 1
             wn.blit(astoimg[i], (astox[i],astoy[i]))
         
