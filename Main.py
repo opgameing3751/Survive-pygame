@@ -9,10 +9,12 @@ from tkinter import *
 from PIL import Image, ImageTk
 import psutil, os
 
-health = 1000
-num_of_astro = 100
-num_of_enemies = 500
+health = 0
+num_of_astro = 0
+num_of_enemies = 0
 running = 0
+FOV = 0
+
 def startgame():
     global num_of_astro, num_of_enemies, running
     running = 1
@@ -24,7 +26,55 @@ def startgame():
         health == 100
     root.destroy
 
+def easy():
+    global health, num_of_astro, num_of_enemies, FOV, running, warning
+    health = 100
+    num_of_astro = 100
+    num_of_enemies = 100
+    warning = 30
+    FOV = 5000
+    running = 1
+def normal():
+    global health, num_of_astro, num_of_enemies, FOV, running, warning
+    health = 200
+    num_of_astro = 100
+    num_of_enemies = 500
+    warning = 50
+    FOV = 1000
+    running = 1
+def hard():
+    global health, num_of_astro, num_of_enemies, FOV, running, warning
+    health = 1000
+    num_of_astro = 100
+    num_of_enemies = 1000
+    warning = 300
+    FOV = 1000
+    running = 1
+def you_dumb():
+    global health, num_of_astro, num_of_enemies, FOV, running, warning
+    health = 100
+    num_of_astro = 100
+    num_of_enemies = 5000
+    warning = 30
+    FOV = 500
+    running = 1
+    
+def top():
+    top=Toplevel()
+    top.geometry('300x250')
+    top.title("settings")
+    v = StringVar()
+    v.set("L")
+    choice1 = Radiobutton(top, text='easy', value=1, variable=v, command=easy)
+    choice2 = Radiobutton(top, text='normal', value=2, variable=v, command=normal)
+    choice3 = Radiobutton(top, text='hard', value=3, variable=v, command=hard)
+    choice4 = Radiobutton(top, text='your dumb', value=4, variable=v, command=you_dumb)
+    choice1.grid(row=2, column=0)
+    choice2.grid(row=3, column=0)
+    choice3.grid(row=4, column=0)
+    choice4.grid(row=5, column=0)
 root = Tk()
+
 root.geometry('600x600')
 root.title('Widgets Tutorial')
 background = PhotoImage(file=r'other sprites\start.png')
@@ -33,8 +83,8 @@ background1.place(x=-2, y=-2)
 
 startbuttonpng = PhotoImage(file=r'other sprites/playbutton.png')
 
-startbutton = Button(root, image=startbuttonpng, command=startgame)
-startbutton.place(x=198, y=300)
+startbutton = Button(root, image=startbuttonpng, command=top)
+startbutton.place(x=68, y=300)
 
 
 
@@ -54,7 +104,7 @@ finished_time = 0
 
 mousecodx = 0
 mousecody = 0
-FOV = 1000
+
 warn = 0
 fps = 0
 distanceasto = 600
@@ -82,8 +132,8 @@ astro13 = pygame.image.load('astros/astro13.png')
 astro14 = pygame.image.load('astros/astro14.png')
 astro15 = pygame.image.load('astros/astro15.png')
 astro16 = pygame.image.load('astros/astro16.png')
-almost_dead_screen1 = pygame.image.load("other sprites/almost dead screen.png")
-almost_dead_screen = pygame.transform.scale(almost_dead_screen1, (1920, 1080))
+almost_dead_screen = pygame.image.load("other sprites/almost dead screen.png").convert_alpha()
+
 startgameimg = pygame.image.load('other sprites\start.png')
 left_b = 600
 right_b = 600
@@ -278,11 +328,8 @@ def game_over():
     global running
     time.sleep(1)
     running = 0
+
     
-def almost_Dead():
-    global updatespertick
-    updatespertick += 1
-    wn.blit(almost_dead_screen, (0,0))
 astrospawn()
 while running == 1:
     global playerx, playery, text, font, coords, frametime, start, mousecoords, fpsrender
@@ -319,10 +366,11 @@ while running == 1:
     
     if health <= 0:
         game_over()
-    if health <= 300:
+    if health <= warning:
         warn = 1
     if warn == 1:
-        almost_Dead()
+        updatespertick += 1
+        wn.blit(almost_dead_screen, (0,0))
 
     for i in range(num_of_enemies):
         if playercoordsX > enemy1X[i]:
