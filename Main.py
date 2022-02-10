@@ -7,7 +7,7 @@ import pygame, time, random, sys
 from pygame.locals import *
 from tkinter import *
 from PIL import Image, ImageTk
-import psutil, os
+#import psutil, os
 
 health = 0
 num_of_astro = 0
@@ -24,7 +24,7 @@ def startgame():
         num_of_enemies = 500
     if health == 0:
         health == 100
-    root.destroy
+    root.quit()
 
 def easy():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
@@ -34,6 +34,7 @@ def easy():
     warning = 30
     FOV = 5000
     running = 1
+    top.quit()
 def normal():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
     health = 200
@@ -42,6 +43,7 @@ def normal():
     warning = 50
     FOV = 1000
     running = 1
+    top.quit()
 def hard():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
     health = 1000
@@ -50,6 +52,7 @@ def hard():
     warning = 300
     FOV = 1000
     running = 1
+    top.quit()
 def you_dumb():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
     health = 100
@@ -58,8 +61,10 @@ def you_dumb():
     warning = 30
     FOV = 500
     running = 1
+    top.quit()
     
 def top():
+    global top
     top=Toplevel()
     top.geometry('300x250')
     top.title("settings")
