@@ -7,7 +7,7 @@ import pygame, time, random, sys
 from pygame.locals import *
 from tkinter import *
 from PIL import Image, ImageTk
-import psutil, os
+#import psutil, os
 
 health = 0
 num_of_astro = 0
@@ -25,7 +25,11 @@ def startgame():
         num_of_enemies = 500
     if health == 0:
         health == 100
+<<<<<<< HEAD
     
+=======
+    root.quit()
+>>>>>>> 00c7b8c9221cd6c953a9f14b5f6bfd38bfa43953
 
 def easy():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
@@ -35,7 +39,11 @@ def easy():
     warning = 30
     FOV = 5000
     running = 1
+<<<<<<< HEAD
     startgame()
+=======
+    top.quit()
+>>>>>>> 00c7b8c9221cd6c953a9f14b5f6bfd38bfa43953
 def normal():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
     health = 200
@@ -44,7 +52,11 @@ def normal():
     warning = 50
     FOV = 1000
     running = 1
+<<<<<<< HEAD
     startgame()
+=======
+    top.quit()
+>>>>>>> 00c7b8c9221cd6c953a9f14b5f6bfd38bfa43953
 def hard():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
     health = 1000
@@ -53,7 +65,11 @@ def hard():
     warning = 300
     FOV = 1000
     running = 1
+<<<<<<< HEAD
     startgame()
+=======
+    top.quit()
+>>>>>>> 00c7b8c9221cd6c953a9f14b5f6bfd38bfa43953
 def you_dumb():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
     health = 100
@@ -62,9 +78,14 @@ def you_dumb():
     warning = 30
     FOV = 500
     running = 1
+<<<<<<< HEAD
     startgame()
+=======
+    top.quit()
+>>>>>>> 00c7b8c9221cd6c953a9f14b5f6bfd38bfa43953
     
 def top():
+    global top
     top=Toplevel()
     top.geometry('300x250')
     top.title("settings")
