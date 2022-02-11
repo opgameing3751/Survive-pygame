@@ -83,7 +83,7 @@ def dead():
     global SCORE
     pat = Tk()
     pat.geometry('600x600')
-    pat.title('Widgets Tutorial')
+    pat.title('you dead')
     dead_screen_png = Image.open("other sprites\you dead screen.png")
     dead_screen = ImageTk.PhotoImage(dead_screen_png)
     dead_screen1 = Label(pat, image=dead_screen)
