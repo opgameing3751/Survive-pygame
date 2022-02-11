@@ -14,6 +14,7 @@ num_of_astro = 0
 num_of_enemies = 0
 running = 0
 FOV = 0
+SCORE = 0
 
 def startgame():
     global num_of_astro, num_of_enemies, running
@@ -24,7 +25,7 @@ def startgame():
         num_of_enemies = 500
     if health == 0:
         health == 100
-    root.destroy
+    
 
 def easy():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
@@ -34,6 +35,7 @@ def easy():
     warning = 30
     FOV = 5000
     running = 1
+    startgame()
 def normal():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
     health = 200
@@ -42,6 +44,7 @@ def normal():
     warning = 50
     FOV = 1000
     running = 1
+    startgame()
 def hard():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
     health = 1000
@@ -50,6 +53,7 @@ def hard():
     warning = 300
     FOV = 1000
     running = 1
+    startgame()
 def you_dumb():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
     health = 100
@@ -58,6 +62,7 @@ def you_dumb():
     warning = 30
     FOV = 500
     running = 1
+    startgame()
     
 def top():
     top=Toplevel()
@@ -73,6 +78,19 @@ def top():
     choice2.grid(row=3, column=0)
     choice3.grid(row=4, column=0)
     choice4.grid(row=5, column=0)
+
+def dead():
+    global SCORE
+    pat = Tk()
+    pat.geometry('600x600')
+    pat.title('Widgets Tutorial')
+    dead_screen_png = Image.open("other sprites\you dead screen.png")
+    dead_screen = ImageTk.PhotoImage(dead_screen_png)
+    dead_screen1 = Label(pat, image=dead_screen)
+    dead_screen1.place(x=-2, y=-2)
+    scorenum = Label(pat, text=SCORE)
+    scorenum.place(x=300, y=300)
+    pat.mainloop()
 root = Tk()
 
 root.geometry('600x600')
@@ -328,6 +346,7 @@ def game_over():
     global running
     time.sleep(1)
     running = 0
+    dead()
 
     
 astrospawn()
@@ -335,6 +354,7 @@ while running == 1:
     global playerx, playery, text, font, coords, frametime, start, mousecoords, fpsrender
     fps_start = time.time()
     start = time.time()
+    SCORE += 1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
