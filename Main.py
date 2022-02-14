@@ -1,3 +1,6 @@
+#by Adam Ross
+#sprites by me exept the astros(i kinda forgot where i got them prob goole or something)
+#version 1.2
 
 from dis import dis
 from email.mime import image
@@ -7,8 +10,8 @@ import pygame, time, random, sys
 from pygame.locals import *
 from tkinter import *
 from PIL import Image, ImageTk
-#import psutil, os
 
+#bace def var
 health = 0
 num_of_astro = 0
 num_of_enemies = 0
@@ -26,7 +29,7 @@ def startgame():
     if health == 0:
         health == 100
     
-
+#diff
 def easy():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
     health = 100
@@ -47,16 +50,16 @@ def normal():
     startgame()
 def hard():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
-    health = 1000
+    health = 500
     num_of_astro = 100
     num_of_enemies = 1000
-    warning = 300
+    warning = 150
     FOV = 1000
     running = 1
     startgame()
 def you_dumb():
     global health, num_of_astro, num_of_enemies, FOV, running, warning
-    health = 100
+    health = 300
     num_of_astro = 100
     num_of_enemies = 5000
     warning = 30
@@ -64,6 +67,7 @@ def you_dumb():
     running = 1
     startgame()
     
+#start screen/defs for start screen
 def top():
     top=Toplevel()
     top.geometry('300x250')
@@ -91,6 +95,8 @@ def dead():
     scorenum = Label(pat, text=SCORE)
     scorenum.place(x=300, y=300)
     pat.mainloop()
+
+
 root = Tk()
 
 root.geometry('600x600')
@@ -118,11 +124,11 @@ wn = pygame.display.set_mode((wn_width, wn_height))
 icon = pygame.image.load("other sprites/xander.png")
 pygame.display.set_icon(icon)
 pygame.display.set_caption('idk yet')
-finished_time = 0
 
+#def var
+finished_time = 0
 mousecodx = 0
 mousecody = 0
-
 warn = 0
 fps = 0
 distanceasto = 600
@@ -130,6 +136,7 @@ distance = 600
 on_screen_enemy_count = 0
 on_screen_astro_count = 0
 updatespertick = 0
+
 #sprites
 bg = pygame.image.load('other sprites/bg.png').convert()
 char1 = pygame.image.load('player\Player-main.png')
@@ -157,6 +164,8 @@ left_b = 600
 right_b = 600
 clockspeed = 60
 
+
+#this will change the clock speed of the game
 def gameclockup():
     global clockspeed
     clockspeed = (30 + clockspeed)
@@ -165,7 +174,7 @@ def gameclockdown():
     clockspeed = (clockspeed - 30)
 startgame = True
 
-
+#the player
 class Player:
     def __init__(self):
         self.image = char
@@ -307,11 +316,12 @@ for i in range(num_of_enemies):
     
     print("enemy spawned")
 
-
+#updates the screen and objects in game
 def update_display():
     global end, start, on_screen_enemy_count, updatespertick
     updatespertick += 1
     health_display = font.render(f'Health: {health}',True,(255,255,255))
+    SCORE_screen = font.render(f'SCORE {SCORE}',True,(255,255,255))
     wn.blit(bg, (0,0))
     wn.blit(text, (0,0))
     wn.blit(coords, (0,20))
@@ -321,6 +331,7 @@ def update_display():
     wn.blit(astroscreen, (0,100))
     wn.blit(updates, (0, 140))
     wn.blit(fpsrender, (0, 160))
+    wn.blit(SCORE_screen, (900, 0))
     on_screen_enemy_count = 0
     updatespertick = 0
     end = time.time()
@@ -348,7 +359,7 @@ def game_over():
     running = 0
     dead()
 
-    
+#this controlls the astro in game
 astrospawn()
 while running == 1:
     global playerx, playery, text, font, coords, frametime, start, mousecoords, fpsrender
@@ -383,7 +394,7 @@ while running == 1:
     update_display()
     wn.blit(player.image, (player.mouse))
 
-    
+    #this deales with health
     if health <= 0:
         game_over()
     if health <= warning:
@@ -391,7 +402,7 @@ while running == 1:
     if warn == 1:
         updatespertick += 1
         wn.blit(almost_dead_screen, (0,0))
-
+    #enemie hit box
     for i in range(num_of_enemies):
         if playercoordsX > enemy1X[i]:
             enemy1X[i] += 5
@@ -448,7 +459,7 @@ while running == 1:
 
 
 
-        #enemy(enemy1X[i], enemy1Y[i], i)
+       #astro hitbox
     for i in range(num_of_astro):
         astrodisx = astox[i] - playercoordsX
         astrodisy = astoy[i] - playercoordsY
@@ -473,7 +484,7 @@ while running == 1:
                 astoy[i] += 2
             if astrodisy > 50:
                 astoy[i] += 10
-        #astro_update(astox[i], astoy[i], i)
+        
         if distanceasto[i] <= FOV:
             updatespertick += 1
             wn.blit(astoimg[i], (astox[i],astoy[i]))
@@ -482,7 +493,7 @@ while running == 1:
             astoy[i] = random.randint(-2000, 2000)
             astox[i] = random.randint(-2000, 2000)
             #print(distance)
-        
+        #this is for the colision for the enemyies and the astros but does not work correctly 
     for i in range(num_of_astro):
         astro_enemy = math.sqrt ((math.pow(astox[i]-enemy1X[i],2)) + (math.pow(astoy[i]-enemy1Y[i],2)))
 
