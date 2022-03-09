@@ -18,6 +18,8 @@ num_of_enemies = 0
 running = 0
 FOV = 0
 SCORE = 0
+loaded_astros = 0
+loaded_enemey = 0
 
 def startgame():
     global num_of_astro, num_of_enemies, running
@@ -158,6 +160,8 @@ astro14 = pygame.image.load('astros/astro14.png')
 astro15 = pygame.image.load('astros/astro15.png')
 astro16 = pygame.image.load('astros/astro16.png')
 almost_dead_screen = pygame.image.load("other sprites/almost dead screen.png").convert_alpha()
+loading_astro = pygame.image.load("other sprites/loading Astros.png")
+loading_enemey = pygame.image.load("other sprites/loading.png")
 
 startgameimg = pygame.image.load('other sprites\start.png')
 left_b = 600
@@ -259,7 +263,9 @@ distanceasto = []
 def astrospawn():
     
     for i in range(num_of_astro):
-        
+        loaded_astros += 1
+        wn.blit(loading_astros, (0,0))
+        wn.blit(astros_loaded, (500,500))
         astrorand = (random.randint(1, 16))
         if astrorand == 1:
             astoimg.append(astro1)
@@ -307,6 +313,9 @@ distance = []
 
 
 for i in range(num_of_enemies):
+    loaded_enemey += 1
+    wn.blit(loading_enemies, (0,0))
+    wn.blit(enemies_loaded, (500,500))
     player = Player()
     enemyimg = pygame.image.load('badthings that kill/badthing.png').convert_alpha()
     Enemyimg1.append(pygame.transform.scale(enemyimg, (50, 50)))
@@ -383,6 +392,8 @@ while running == 1:
     enemyscreen = font.render(f'Enemys rendered {on_screen_enemy_count}',True,(255,255,255))
     updates = font.render(f'updates per game tick {updatespertick}',True,(255,255,255))
     fpsrender = font.render(f'FPS {fps}',True,(255,255,255))
+    enemeys_loaded = font.render(f'{loaded_enemey}/{num_of_enemies}',True,(255,255,255))
+    astros_loaded = font.render(f'{loaded_astros}/{num_of_astro}',True,(255,255,255))
     [playercoordsX, playercoordsY] = player.mouse
     mousecodx = playercoordsX - player.rect.x - 300
     mousecody = playercoordsY - player.rect.y - 300
