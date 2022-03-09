@@ -1,6 +1,6 @@
 #by Adam Ross
 #sprites by me exept the astros(i kinda forgot where i got them prob goole or something)
-#version 1.2
+#version 1.3
 
 from dis import dis
 from email.mime import image
