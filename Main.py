@@ -2,6 +2,7 @@
 #sprites by me exept the astros(i kinda forgot where i got them prob goole or something)
 #version 1.3
 
+from asyncio import subprocess
 from dis import dis
 from email.mime import image
 import math
@@ -10,6 +11,7 @@ import pygame, time, random, sys
 from pygame.locals import *
 from tkinter import *
 from PIL import Image, ImageTk
+import subprocess
 
 #bace def var
 health = 0
@@ -20,6 +22,7 @@ FOV = 0
 SCORE = 0
 loaded_astros = 0
 loaded_enemey = 0
+pc_death = 0
 
 def startgame():
     global num_of_astro, num_of_enemies, running
@@ -68,7 +71,15 @@ def you_dumb():
     FOV = 500
     running = 1
     startgame()
-    
+def pc_crash_on_death():
+    global health, num_of_astro, num_of_enemies, FOV, running, warning, pc_death
+    health = 500
+    num_of_astro = 150
+    num_of_enemies = 1000
+    warning = 150
+    FOV = 1000
+    running = 1
+    pc_death = 1
 #start screen/defs for start screen
 def top():
     top=Toplevel()
@@ -80,10 +91,12 @@ def top():
     choice2 = Radiobutton(top, text='normal', value=2, variable=v, command=normal)
     choice3 = Radiobutton(top, text='hard', value=3, variable=v, command=hard)
     choice4 = Radiobutton(top, text='your dumb', value=4, variable=v, command=you_dumb)
+    choice5 = Radiobutton(top, text='pc_crash_on_death', value=4, variable=v, command=pc_crash_on_death)
     choice1.grid(row=2, column=0)
     choice2.grid(row=3, column=0)
     choice3.grid(row=4, column=0)
     choice4.grid(row=5, column=0)
+    choice5.grid(row=6, column=0)
 
 def dead():
     global SCORE
@@ -96,6 +109,7 @@ def dead():
     dead_screen1.place(x=-2, y=-2)
     scorenum = Label(pat, text=SCORE)
     scorenum.place(x=300, y=300)
+    subprocess.call([r'THIS FILE WILL SHUT DOWN YOUR PC.bat'])
     pat.mainloop()
 
 
@@ -160,8 +174,8 @@ astro14 = pygame.image.load('astros/astro14.png')
 astro15 = pygame.image.load('astros/astro15.png')
 astro16 = pygame.image.load('astros/astro16.png')
 almost_dead_screen = pygame.image.load("other sprites/almost dead screen.png").convert_alpha()
-loading_astro = pygame.image.load("other sprites/loading Astros.png")
-loading_enemey = pygame.image.load("other sprites/loading.png")
+loading_astro = pygame.image.load("other sprites/loading Astros.png").convert()
+loading_enemey = pygame.image.load("other sprites/loading.png").convert()
 
 startgameimg = pygame.image.load('other sprites\start.png')
 left_b = 600
@@ -261,11 +275,14 @@ astoy = []
 distanceasto = []
 
 def astrospawn():
-    
+    loaded_astros = 0
     for i in range(num_of_astro):
+        
+        font = pygame.font.Font(None,30)
         loaded_astros += 1
-        wn.blit(loading_astros, (0,0))
-        wn.blit(astros_loaded, (500,500))
+        astros_loaded = font.render(f'{loaded_astros}/{num_of_astro}',True,(255,255,255))
+        wn.blit(loading_astro, (0,0))
+        wn.blit(astros_loaded, (840,720))
         astrorand = (random.randint(1, 16))
         if astrorand == 1:
             astoimg.append(astro1)
@@ -299,7 +316,7 @@ def astrospawn():
             astoimg.append(astro15)
         elif astrorand == 16:
             astoimg.append(astro16)
-        
+        pygame.display.update()
         astox.append(random.randint(-2000, 2500))
         astoy.append(random.randint(-2000, 2500))
         distanceasto.append(0)
@@ -314,15 +331,17 @@ distance = []
 
 for i in range(num_of_enemies):
     loaded_enemey += 1
-    wn.blit(loading_enemies, (0,0))
-    wn.blit(enemies_loaded, (500,500))
+    font = pygame.font.Font(None,30)
+    enemeys_loaded = font.render(f'{loaded_enemey}/{num_of_enemies}',True,(255,255,255))
+    wn.blit(loading_enemey, (0,0))
+    wn.blit(enemeys_loaded, (840,720))
     player = Player()
     enemyimg = pygame.image.load('badthings that kill/badthing.png').convert_alpha()
     Enemyimg1.append(pygame.transform.scale(enemyimg, (50, 50)))
     enemy1Y.append(random.randint(-4000, 4500))
     enemy1X.append(random.randint(-4000, 4500))
     distance.append(0)
-    
+    pygame.display.update()
     print("enemy spawned")
 
 #updates the screen and objects in game
@@ -371,7 +390,7 @@ def game_over():
 #this controlls the astro in game
 astrospawn()
 while running == 1:
-    global playerx, playery, text, font, coords, frametime, start, mousecoords, fpsrender
+    global playerx, playery, text, coords, frametime, start, mousecoords, fpsrender
     fps_start = time.time()
     start = time.time()
     SCORE += 1
