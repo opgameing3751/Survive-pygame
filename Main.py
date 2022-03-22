@@ -109,7 +109,8 @@ def dead():
     dead_screen1.place(x=-2, y=-2)
     scorenum = Label(pat, text=SCORE)
     scorenum.place(x=300, y=300)
-    subprocess.call([r'THIS FILE WILL SHUT DOWN YOUR PC.bat'])
+    if pc_death == True:
+        subprocess.call([r'THIS FILE WILL SHUT DOWN YOUR PC.bat'])
     pat.mainloop()
 
 
