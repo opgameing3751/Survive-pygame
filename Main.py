@@ -12,6 +12,7 @@ from pygame.locals import *
 from tkinter import *
 from PIL import Image, ImageTk
 import subprocess
+import os
 
 #bace def var
 health = 0
@@ -563,7 +564,7 @@ while running == 1:
         #wn.blit(char, (300, 300))
         
     pygame.display.update()
-    
+    #test
     on_screen_astro_count = 0
     on_screen_update()
     fps_s = time.time() - start
