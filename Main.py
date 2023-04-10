@@ -136,8 +136,8 @@ mainClock = pygame.time.Clock()
 
 pygame.init()
 #jam
-wn_width = 1920
-wn_height = 1080
+wn_width = 1280
+wn_height = 720
 wn = pygame.display.set_mode((wn_width, wn_height))
 icon = pygame.image.load("other sprites/xander.png")
 pygame.display.set_icon(icon)
